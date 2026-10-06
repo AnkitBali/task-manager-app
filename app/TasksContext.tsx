@@ -1,11 +1,11 @@
-import {createContext, type Dispatch, type ReactNode, useContext, useReducer} from 'react';
+import {createContext, type Dispatch, type ReactNode, useContext, useReducer, useEffect} from 'react';
 import {Task, ActionObj} from './types'
 
 // Here, we are passing null as the default value to both contexts. The actual values will be provided by the TaskApp component.
 export const TasksContext = createContext<Task[] | null>(null);
 export const TasksDispatchContext = createContext<Dispatch<ActionObj> | null>(null);
 
-const initialTasks: Task[] = [{ id: 1, text: "first task", done: false }];
+// const initialTasks: Task[] = [];
 
 function tasksReducer(tasks: Task[], action: ActionObj): Task[] {
   switch (action.type) {
@@ -24,14 +24,20 @@ function tasksReducer(tasks: Task[], action: ActionObj): Task[] {
     case "deleted": {
       return tasks.filter((task) => task.id !== action.id);
     }
+    case "loaded": {
+      return action.tasks;
+    }
     default: {
       throw new Error("Unknown Error");
     }
   }
 }
 
-export const TasksProvider = ({children}: {children: ReactNode}) => {
+export const TasksProvider = ({children, initialTasks}: {children: ReactNode, initialTasks: Task[]}) => {
     const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
+    useEffect(()=>{
+      dispatch({ type: "loaded", tasks: initialTasks })
+    }, [initialTasks])
     return(
         <TasksContext value={tasks}>
             <TasksDispatchContext value={dispatch}>

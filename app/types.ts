@@ -1,17 +1,21 @@
 export type Task = {
-  id: number;
+  id: string;
   text: string;
   done: boolean;
-}
+};
 
-export type ActionObj = | {
-  type: 'added';
-  text: string;
-  id: number
-} | {
-  type: 'changed';
-  task: Task;
-} | {
-  type: 'deleted';
-  id: number;
-}
+export type ActionObj =
+  | {
+      type: "added";
+      text: string;
+      id: string;
+    }
+  | {
+      type: "changed";
+      task: Task;
+    }
+  | {
+      type: "deleted";
+      id: string;
+    }
+  | { type: "loaded"; tasks: Task[] };
